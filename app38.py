@@ -6,10 +6,6 @@ import requests
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 
-# URL do arquivo pickle "raw"
-with open('model_final.pkl', 'rb') as f:
-    model = pickle.load(f)
-
 # Baixar o arquivo do modelo pickle
 try:
     response = requests.get(url)
