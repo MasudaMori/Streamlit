@@ -1,4 +1,5 @@
 streamlit
+pyarrow
 pandas
 numpy==1.23
 scikit-learn==1.2.2
