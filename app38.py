@@ -11,7 +11,13 @@ url = 'https://raw.githubusercontent.com/jeffersonsilva11/Cientista-de-Dados/mai
 
 # Baixar o arquivo do modelo pickle
 response = requests.get(url)
-model = pickle.loads(response.content)
+if response.status_code == 200:
+    st.write("Arquivo baixado com sucesso!")
+    # Verifique o conteúdo ou salve em um arquivo para inspecionar
+    with open("model_final.pkl", "wb") as f:
+        f.write(response.content)
+else:
+    st.error(f"Falha ao baixar o arquivo. Status code: {response.status_code}")
 
 # Função para o pré-processamento dos dados
 def preprocessamento(df, model):
