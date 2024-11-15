@@ -89,10 +89,12 @@ def main():
                     st.write(df)
                 
                 # Download dos resultados como CSV
-                st.download_button(label='Download dos Resultados em CSV',
-                                   data=df.to_csv().encode('utf-8'),
-                                   file_name='resultados_escoragem.csv',
-                                   mime='text/csv')
+                st.download_button(
+                    label='Baixar resultados como CSV',
+                    data=df.to_csv(index=False).encode('utf-8'),
+                    file_name='resultados_escoragem.csv',
+                    mime='text/csv'
+                )
             else:
                 st.error("Não foi possível realizar a escoragem devido a um erro no pré-processamento.")
 
