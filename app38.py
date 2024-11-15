@@ -6,14 +6,18 @@ import requests
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 
+# URL do arquivo pickle "raw"
+url = 'https://raw.githubusercontent.com/jeffersonsilva11/Cientista-de-Dados/main/modulo-38/model_final.pkl'
+
 # Baixar o arquivo do modelo pickle
-try:
-    response = requests.get(url)
-    response.raise_for_status()  # Levanta um erro para códigos de status HTTP não 200
-    model = pickle.loads(response.content)
-except requests.exceptions.RequestException as e:
-    st.error(f"Erro ao baixar o modelo: {e}")
-    st.stop()  # Para a execução do Streamlit se o modelo não for carregado
+response = requests.get(url)
+if response.status_code == 200:
+    st.write("Arquivo baixado com sucesso!")
+    # Verifique o conteúdo ou salve em um arquivo para inspecionar
+    with open("model_final.pkl", "wb") as f:
+        f.write(response.content)
+else:
+    st.error(f"Falha ao baixar o arquivo. Status code: {response.status_code}")
 
 # Função para o pré-processamento dos dados
 def preprocessamento(df, model):
@@ -91,10 +95,12 @@ def main():
                     st.write(df)
                 
                 # Download dos resultados como CSV
-                st.download_button(label='Download dos Resultados em CSV',
-                                   data=df.to_csv().encode('utf-8'),
-                                   file_name='resultados_escoragem.csv',
-                                   mime='text/csv')
+                st.download_button(
+                    label='Baixar resultados como CSV',
+                    data=df.to_csv(index=False).encode('utf-8'),
+                    file_name='resultados_escoragem.csv',
+                    mime='text/csv'
+                )
             else:
                 st.error("Não foi possível realizar a escoragem devido a um erro no pré-processamento.")
 
