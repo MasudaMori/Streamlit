@@ -7,11 +7,17 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 
 # URL do arquivo pickle "raw"
-url = 'https://raw.githubusercontent.com/jeffersonsilva11/Cientista-de-Dados/main/modulo-38/model_final.pkl'
+with open('model_final.pkl', 'rb') as f:
+    model = pickle.load(f)
 
 # Baixar o arquivo do modelo pickle
-response = requests.get(url)
-model = pickle.loads(response.content)
+try:
+    response = requests.get(url)
+    response.raise_for_status()  # Levanta um erro para códigos de status HTTP não 200
+    model = pickle.loads(response.content)
+except requests.exceptions.RequestException as e:
+    st.error(f"Erro ao baixar o modelo: {e}")
+    st.stop()  # Para a execução do Streamlit se o modelo não for carregado
 
 # Função para o pré-processamento dos dados
 def preprocessamento(df, model):
