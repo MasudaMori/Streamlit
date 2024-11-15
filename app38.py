@@ -7,17 +7,27 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 
 # URL do arquivo pickle "raw"
-url = 'https://raw.githubusercontent.com/MasudaMori/Streamlit/refs/heads/main/credit_scoring.csv'
+try:
+    with open('model_final.pkl', 'rb') as f:
+        model = pickle.load(f)
+except Exception as e:
+    st.error(f"Erro ao carregar o modelo local: {e}")
+    model = None
+
 
 # Baixar o arquivo do modelo pickle
 response = requests.get(url)
 if response.status_code == 200:
-    st.write("Arquivo baixado com sucesso!")
-    # Verifique o conteúdo ou salve em um arquivo para inspecionar
-    with open("model_final.pkl", "wb") as f:
-        f.write(response.content)
+    try:
+        model = pickle.loads(response.content)
+        st.write("Modelo carregado com sucesso!")
+    except Exception as e:
+        st.error(f"Erro ao carregar o modelo: {e}")
+        model = None
 else:
     st.error(f"Falha ao baixar o arquivo. Status code: {response.status_code}")
+    model = None
+
 
 # Função para o pré-processamento dos dados
 def preprocessamento(df, model):
@@ -53,6 +63,9 @@ def preprocessamento(df, model):
 
 # Função para realizar a escoragem
 def escoragem(df, model):
+    if model is None:
+        st.error("O modelo não está disponível para realizar a escoragem.")
+        return None
     # Pré-processamento dos dados
     df_processed = preprocessamento(df, model)
     if df_processed is not None:
@@ -64,6 +77,10 @@ def escoragem(df, model):
 
 # Interface Streamlit
 def main():
+    if model is None:
+        st.error("O modelo não foi carregado. Por favor, verifique o arquivo ou o link fornecido.")
+        return
+
     st.title("Aplicação para Escoragem de Dados")
 
     # Carregador de arquivos FTR
